@@ -161,44 +161,6 @@ def build_decoder(args,relation_matrix):
     ont_pretrain_trainable = True
     dropout_rate           = 1.0
 
-    def channel(x):
-        print 'training with noise snr db', args.train_channel_low, args.train_channel_high
-        noise_sigma_low =  snr_db2sigma(args.train_channel_low) # 0dB
-        noise_sigma_high =  snr_db2sigma(args.train_channel_high) # 0dB
-        print 'training with noise snr db', noise_sigma_low, noise_sigma_high
-        noise_sigma =  tf.random_uniform(tf.shape(x),
-            minval=noise_sigma_high,
-            maxval=noise_sigma_low,
-            dtype=tf.float32
-        )
-
-        return x+ noise_sigma*tf.random_normal(tf.shape(x),dtype=tf.float32, mean=0., stddev=1.0)   #need to include space for different snrs
-    def relationchannel(x):
-        print 'trainning with noise snr db',args.train_channel_low, args.train_channel_high
-        noise_sigma_low =  snr_db2sigma(args.train_channel_low) # 0dB
-        noise_sigma_high =  snr_db2sigma(args.train_channel_high) # 0dB
-        print 'training with noise snr db', noise_sigma_low, noise_sigma_high
-        noise_sigma =  tf.random_uniform(tf.shape(x),
-                minval=noise_sigma_high,
-                maxval=noise_sigma_low,
-                dtype=tf.float32
-            )
-        noise = noise_sigma*tf.random_normal(tf.shape(x),dtype=tf.float32, mean=0., stddev=1.0)
-        batch_relation_matrix = tf.tile(relation_matrix,multiples=[args.batch_size,1,1])
-        return x+tf.matmul(batch_relation_matrix,noise)
-
-    def p_noisechannel(x):
-        print 'trainning with noise snr db',args.train_channel_low, args.train_channel_high
-        noise_sigma_low =  snr_db2sigma(args.train_channel_low) # 0dB
-        noise_sigma_high =  snr_db2sigma(args.train_channel_high) # 0dB
-        print 'training with noise snr db', noise_sigma_low, noise_sigma_high
-        noise_sigma =  tf.random_uniform(tf.shape(x),
-                minval=noise_sigma_high,
-                maxval=noise_sigma_low,
-                dtype=tf.float32
-            )
-        return x+noise_sigma*tf.constant(cn.powerlaw_psd_gaussian(args.beta,[args.batch_size]+x.get_shape().as_list()[1:]),dtype='float32')
-
 
     input_x         = Input(shape = (args.block_len, args.code_rate), dtype='float32', name='D_input')
     combined_x = input_x
@@ -309,22 +271,6 @@ def test(args, testrelation_matrix, dec_weight):
     for idx, snr_db in enumerate(SNRS_dB):
 
         inputs = Input(shape=(args.block_len, args.code_rate))
-        #x = inputs
-
-        def channel(x):
-            noise_sigma =  snr_db2sigma(snr_db)
-            return x+ noise_sigma*tf.random_normal(tf.shape(x),dtype=tf.float32, mean=0., stddev=1.0)   #need to include space for different snrs
-        
-        def relationchannel(x):
-            noise_sigma =  snr_db2sigma(snr_db)
-            noise = noise_sigma*tf.random_normal(tf.shape(x),dtype=tf.float32, mean=0., stddev=1.0)
-            batch_relation_matrix = tf.tile(relation_matrix,multiples=[args.test_batch_size,1,1])
-            return x+tf.matmul(batch_relation_matrix,noise)
-
-        def p_noisechannel(x):
-            noise_sigma =  snr_db2sigma(snr_db)
-            return x+noise_sigma*tf.constant(cn.powerlaw_psd_gaussian(args.beta,[args.test_batch_size]+x.get_shape().as_list()[1:]),dtype='float32')
-
         #x          = Lambda(p_noisechannel)(inputs)
         x = inputs
 

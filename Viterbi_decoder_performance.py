@@ -1,9 +1,4 @@
-__author__ = 'yihanjiang'
-'''
-Evaluate convolutional code benchmark.
-'''
 from utils import corrupt_signal, get_test_sigmas
-
 import sys
 import numpy as np
 import time

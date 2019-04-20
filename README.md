@@ -13,15 +13,15 @@ Fistly, thanks for the source code from yihanjiang/Sequential-RNN-Decoder. Our s
 ###Traditional viterbi decoder performance
 
 
-$ python conv_codes_benchmark.py -num_block 100 -block_len 100 -snr_test_start -1 -snr_test_end 8 -snr_points 10 -decoding_type hard -channel awgn
+$ python Viterbi_decoder_performance.py -num_block 100 -block_len 100 -snr_test_start -1 -snr_test_end 8 -snr_points 10 -decoding_type hard -channel awgn
 
-$ python conv_codes_benchmark.py -num_block 100 -block_len 100 -snr_test_start -1 -snr_test_end 8 -snr_points 10 -decoding_type unquantized -noise_type awgn
+$ python Viterbi_decoder_performance.py -num_block 100 -block_len 100 -snr_test_start -1 -snr_test_end 8 -snr_points 10 -decoding_type unquantized -noise_type awgn
 
 ####RNN_decoder performance under standard correlation noise model
 
-$python conv_decoder_relationchannel_cudnn.py -block_len 200 -num_block 100000 -code_rate 2 -test_ratio 2 -batch_size 200 -num_Dec_layer 2 -num_Dec_unit 200  -num_epoch 30 -relation_val 0.8 -train_channel_high 0.0
+$python RNN_decoder_relationchannel_cudnn.py -block_len 200 -num_block 100000 -code_rate 2 -test_ratio 2 -batch_size 200 -num_Dec_layer 2 -num_Dec_unit 200  -num_epoch 30 -relation_val 0.8 -train_channel_high 0.0
     
 
 #####RNN_decoder performance under pink noise
 
-python conv_decoder_pnoisechannel_cudnn_newgenerator.py -block_len 100 -num_block 50000 -test_ratio 2 -batch_size 100 -test_batch_size 100 -num_Dec_unit 200 -num_epoch 25 -train_channel_high 0.0
+python RNN_decoder_pnoisechannel_cudnn_newgenerator.py -block_len 100 -num_block 50000 -test_ratio 2 -batch_size 100 -test_batch_size 100 -num_Dec_unit 200 -num_epoch 25 -train_channel_high 0.0
